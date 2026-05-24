@@ -3,6 +3,7 @@ import json
 import requests
 from datetime import datetime
 import time
+from proxmoxer import ProxmoxAPI
 
 # ----------------------
 # Configs de Controlo - ir buscar com @api_bp.get('/actions/<gateway_id>')
@@ -163,6 +164,33 @@ def on_message(client, userdata, msg):
             
         except Exception as e:
             print(f"[ERRO MQTT] Falha ao ler dados: {e}")
+
+#--------------------------
+# Migração de VMs
+# --------------------------
+def migrate_vm(vm_hostname, destination_hostname):
+    print(f"[MIGRAÇÃO] Iniciando migração de {vm_hostname} para {destination_hostname}...")
+    proxmox = ProxmoxAPI("192.168.33.128", user="root@pam", password="ubuntuubuntu", verify_ssl=False)
+
+    vm_id = None
+    for node in proxmox.nodes.get():
+        node_name = node['node']
+        vms = proxmox.nodes(node_name).qemu.get()
+        for vm in vms:
+            if vm['name'] == vm_hostname:
+                vm_id = vm['vmid']
+                break
+        if vm_id:
+            break
+    if not vm_id:
+        print(f"[MIGRAÇÃO] VM {vm_hostname} não encontrada.")
+        return
+
+    try:
+        proxmox.nodes(node_name).qemu(vm_id).migrate.post(target=destination_hostname, online=1)
+        print(f"[MIGRAÇÃO] Migração de {vm_hostname} para {destination_hostname} iniciada com sucesso.")
+    except Exception as e:
+        print(f"[MIGRAÇÃO] Falha ao iniciar migração: {e}")
 
 # TODO
 # na inicialização fazer post do gateway proprio (link code nº random base64)
