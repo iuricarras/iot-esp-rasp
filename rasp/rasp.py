@@ -3,6 +3,7 @@ import json
 import requests
 from datetime import datetime
 import time
+import dotenv
 from proxmoxer import ProxmoxAPI
 
 # ----------------------
@@ -168,9 +169,14 @@ def on_message(client, userdata, msg):
 #--------------------------
 # Migração de VMs
 # --------------------------
+# Só necessitas de chamar esta função com o hostname da VM a migrar e o hostname do destino
+# Ela vai buscar as credenciais ao ficheiro .env
+# mas podemos depois adicionar isso no ficheiro de configurações
 def migrate_vm(vm_hostname, destination_hostname):
     print(f"[MIGRAÇÃO] Iniciando migração de {vm_hostname} para {destination_hostname}...")
-    proxmox = ProxmoxAPI("192.168.33.128", user="root@pam", password="", verify_ssl=False)
+    PROXMOX_USER=dotenv.get_key(".env", "PROXMOX_USER")
+    PROXMOX_PASSWORD=dotenv.get_key(".env", "PROXMOX_PASSWORD")
+    proxmox = ProxmoxAPI("192.168.33.128", user=PROXMOX_USER, password=PROXMOX_PASSWORD, verify_ssl=False)
 
     vm_id = None
     for node in proxmox.nodes.get():
@@ -210,5 +216,3 @@ last_send_time = time.time()
 print("Sistema pronto. Dados serão enviados a cada 1 minuto...\n")
 
 client.loop_forever()
-
-

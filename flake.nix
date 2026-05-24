@@ -19,6 +19,7 @@
           python-pkgs.proxmoxer
           python-pkgs.paho-mqtt
           python-pkgs.pip
+          python-pkgs.python-dotenv
         ]))
       ];
     };
