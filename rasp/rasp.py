@@ -170,7 +170,7 @@ def on_message(client, userdata, msg):
 # --------------------------
 def migrate_vm(vm_hostname, destination_hostname):
     print(f"[MIGRAÇÃO] Iniciando migração de {vm_hostname} para {destination_hostname}...")
-    proxmox = ProxmoxAPI("192.168.33.128", user="root@pam", password="ubuntuubuntu", verify_ssl=False)
+    proxmox = ProxmoxAPI("192.168.33.128", user="root@pam", password="", verify_ssl=False)
 
     vm_id = None
     for node in proxmox.nodes.get():
