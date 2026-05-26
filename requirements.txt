@@ -11,3 +11,4 @@ pycparser==3.0
 PyNaCl==1.6.2
 requests==2.33.1
 urllib3==2.6.3
+python-dotenv==1.2.2

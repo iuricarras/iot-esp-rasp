@@ -1,0 +1,4 @@
+{
+  "rack1": ["host1", "host2", "host3"],
+  "rack2": ["host4", "host5"]
+}
